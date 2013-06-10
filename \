@@ -1,0 +1,11 @@
+<html>
+<body>
+<script type="text/javascript">
+<!-- 
+document.write("Hello World!");
+document.writeln("<br >");
+document.write("I love learning javascript at referencedesigner.com");
+//--> 
+</script>
+</body>
+</html>
