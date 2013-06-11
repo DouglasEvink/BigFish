@@ -5,79 +5,117 @@
   <title>Map</title>
   <meta name="description" content="Map">
   <meta name="author" content="Me">
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+  <meta charset="utf-8">
   <!--[if lt IE 9]>
   <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
+    <style>
+      html, body, #map-canvas {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+    </style>
+<!--    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+    <script>
+var map;
+function initialize() {
+  var mapOptions = {
+    zoom: 8,
+    center: new google.maps.LatLng(43.0137, -85.6861),
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  };
+  map = new google.maps.Map(document.getElementById('map-canvas'),
+      mapOptions);
+
+var flightPlanCoordinates = [
+      new google.maps.LatLng(43.0137, -85.6861),
+      new google.maps.LatLng(42.5467, -83.2113),
+  ];
+  var flightPath = new google.maps.Polyline({
+    path: flightPlanCoordinates,
+    strokeColor: '#FF0000',
+    strokeOpacity: 1.0,
+    strokeWeight: 2
+  });
+
+  flightPath.setMap(map);
+
+}
+
+google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script> -->
 </head>
 <body>
 
-<script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>
-<script type="text/javascript" src="./js/util.js"></script>
-<script type="text/javascript">
-var stnlat = 42.899572;
-var stnlon = -86.272291;
-var stnid = "45029";
-var map = null;
-var stations = new Array();
-var stnicon = null;
-var otherstnicon = null;
-var badstnicon = null;
-function loadmap() {
-	document.getElementById("stnmapcontainer").style.display = 'block';
+<?php
+$con=mysqli_connect("192.168.6.74","root","scs0scsi","BigFish");
+$sql = <<<SQL
+    SELECT * FROM `location` ORDER BY locationTime
+SQL;
+if(!$result = $con->query($sql)){
+    die('There was an error running the query [' . $db->error . ']');
+}
 
-	map = new google.maps.Map(document.getElementById("stnmap"), {
-        center: new google.maps.LatLng(stnlat, stnlon),
-        zoom: 7,
-        maxZoom: 12,
-        minZoom: 4,
-        mapTypeId: google.maps.MapTypeId.TERRAIN,
-        streetViewControl: false,
-        mapTypeControl: false,
-        zoomControlOptions: {
-            style: google.maps.ZoomControlStyle.SMALL
-        }
-    });
+while($row = $result->fetch_assoc()){
 
-	stnicon = new google.maps.Marker({
-        icon: './images/tiny_green_marker.png'
-    });
-	
-	otherstnicon = new google.maps.Marker({
-        icon: './images/tiny_active_marker.png'
-    });
+    $rows[]=$row;
+//    $to_encode[] = $row;
+//echo $row['locationTime'] . '<br />';
+}
+/*foreach ($rows as $key=>$data) {
+    echo $data['locationTime'] . "<br />";
+    echo $key . "  " . $data . "<br />";
+}
+var_dump($rows);*/
+?>
 
-	badstnicon = new google.maps.Marker({
-        icon: './images/tiny_inactive_marker.png'
-    });
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+    <script>
+var locations = <?php echo json_encode($rows); ?>;
+var locationX = locations[0];
+var index;
+var coordinates = [];
 
-    downloadUrl('./mhldbcmapstations.xml', function (data) {
-        var i, m, markers, st;
 
-        markers = data.documentElement.getElementsByTagName('station');
+console.log(locations);
 
-        for (i = 0; i < markers.length; i += 1) {
-            m = new google.maps.Marker({
-                icon: (markers[i].getAttribute('data') === 'y') ? otherstnicon.icon : badstnicon.icon,
-                position: new google.maps.LatLng(parseFloat(markers[i].getAttribute('lat')),
-                    parseFloat(markers[i].getAttribute('lon'))),
-                map: map,
-                station: markers[i].getAttribute('id'),
-                title: markers[i].getAttribute('name')
-            });
+var map;
+function initialize() {
+  var mapOptions = {
+    zoom: 8,
+    center: new google.maps.LatLng(43.0137, -85.6861),
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  };
+  map = new google.maps.Map(document.getElementById('map-canvas'),
+      mapOptions);
 
-            google.maps.event.addListener(m, 'click', function () {
-                location.href = './station_page.php?station=' + this.station;
-            });
-        }
-    });
+      for (index = 0; index < locations.length; ++index) {
+            locationX = locations[index];
+            coordinates[index] = new google.maps.LatLng(locationX['latitude'], locationX['longitude']);
+      };
+var flightPlanCoordinates = [];
+flightPlanCoordinates = coordinates;
+
+  var flightPath = new google.maps.Polyline({
+    path: flightPlanCoordinates,
+    strokeColor: '#FF0000',
+    strokeOpacity: 1.0,
+    strokeWeight: 2
+  });
+
+  flightPath.setMap(map);
 
 }
 
-function changeMapType(map_type) {
-    map.setMapTypeId(map_type);
-}
+google.maps.event.addDomListener(window, 'load', initialize);
 
-window.onload=loadmap;
+    </script>
+
+
+<div id="map-canvas"></div> 
 
 </body>
 </html>
