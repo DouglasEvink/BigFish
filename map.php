@@ -17,41 +17,11 @@
         height: 100%;
       }
     </style>
-<!--    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
-    <script>
-var map;
-function initialize() {
-  var mapOptions = {
-    zoom: 8,
-    center: new google.maps.LatLng(43.0137, -85.6861),
-    mapTypeId: google.maps.MapTypeId.ROADMAP
-  };
-  map = new google.maps.Map(document.getElementById('map-canvas'),
-      mapOptions);
-
-var flightPlanCoordinates = [
-      new google.maps.LatLng(43.0137, -85.6861),
-      new google.maps.LatLng(42.5467, -83.2113),
-  ];
-  var flightPath = new google.maps.Polyline({
-    path: flightPlanCoordinates,
-    strokeColor: '#FF0000',
-    strokeOpacity: 1.0,
-    strokeWeight: 2
-  });
-
-  flightPath.setMap(map);
-
-}
-
-google.maps.event.addDomListener(window, 'load', initialize);
-
-    </script> -->
 </head>
 <body>
 
 <?php
-$con=mysqli_connect("192.168.6.74","root","scs0scsi","BigFish");
+$con=mysqli_connect("127.0.0.1","root","scs0scsi","BigFish");
 $sql = <<<SQL
     SELECT * FROM `location` ORDER BY locationTime
 SQL;
@@ -62,14 +32,7 @@ if(!$result = $con->query($sql)){
 while($row = $result->fetch_assoc()){
 
     $rows[]=$row;
-//    $to_encode[] = $row;
-//echo $row['locationTime'] . '<br />';
 }
-/*foreach ($rows as $key=>$data) {
-    echo $data['locationTime'] . "<br />";
-    echo $key . "  " . $data . "<br />";
-}
-var_dump($rows);*/
 ?>
 
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
