@@ -21,9 +21,9 @@ function distance($lat1, $lon1, $lat2, $lon2, $unit)
 
 
 
-$con=mysqli_connect("192.168.6.74","root","scs0scsi","BigFish");
+$con=mysqli_connect("127.0.0.1","root","scs0scsi","BigFish");
 $sql = <<<SQL
-    SELECT * FROM `location` ORDER BY locationTime
+    SELECT * FROM `location` WHERE idsession=75 ORDER BY locationTime
 SQL;
 if(!$result = $con->query($sql)){
     die('There was an error running the query [' . $db->error . ']');

@@ -1,6 +1,12 @@
+<?php
+include ('template/allPagesCode.php');
+?>
+
 <!doctype html>
 <html lang="en">
 <head>
+  <?php include ('template/head.php'); ?>
+	
   <meta charset="utf-8">
   <title>Map</title>
   <meta name="description" content="Map">
@@ -16,14 +22,25 @@
         padding: 0;
         height: 100%;
       }
+	  #map-container {
+		  padding-top: 50px;
+		  height: 100%;
+	  }
     </style>
 </head>
 <body>
 
 <?php
-$con=mysqli_connect("127.0.0.1","root","scs0scsi","BigFish");
+include ('template/header.php');
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+
+$sessionid = $_GET['sessionid'];
+//$sessionid = 1;
+
+/*$con=mysqli_connect("127.0.0.1","root","scs0scsi","BigFish");
 $sql = <<<SQL
-    SELECT * FROM `location` ORDER BY locationTime
+    SELECT * FROM `location` WHERE 'sessionid=1' ORDER BY locationTime
 SQL;
 if(!$result = $con->query($sql)){
     die('There was an error running the query [' . $db->error . ']');
@@ -32,7 +49,11 @@ if(!$result = $con->query($sql)){
 while($row = $result->fetch_assoc()){
 
     $rows[]=$row;
-}
+}*/
+include ('classes/class.dbAccess.php');
+$dbAccess = new dbAccess();
+$rows = $dbAccess->selectLocationBySession($sessionid);
+//var_dump($rows);
 ?>
 
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
@@ -76,9 +97,12 @@ flightPlanCoordinates = coordinates;
 google.maps.event.addDomListener(window, 'load', initialize);
 
     </script>
+	<div id="map-container">
+		  <div id="map-canvas"></div> 
+	  </div>
 
+	  <?php include('template/footer.php'); ?>
 
-<div id="map-canvas"></div> 
 
 </body>
 </html>
